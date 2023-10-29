@@ -1,0 +1,29 @@
+{% extends "flashcards/base.html" %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+	
+	<div class="row pt-md-4">
+        <div class="col-md-12">
+            <div class="blog-entry ftco-animate d-md-flex">
+                <div class="form-group">
+					<form method="POST" action="generate/">
+						{% csrf_token %}
+						
+							<div class="form-group">
+							  <label for="question">Ask your question to AI</label>
+							  <input type="text" class="form-control" id="question" name="question" placeholder="question">
+							</div>
+							<button type="submit" class="btn btn-success">Submit</button>
+						  
+					</form>
+				</div>
+				
+            </div>
+        </div>
+	</div>
+
+{% endblock %}

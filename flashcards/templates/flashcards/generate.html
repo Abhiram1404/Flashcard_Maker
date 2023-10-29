@@ -1,0 +1,27 @@
+{% extends "flashcards/base.html" %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+	
+	<div class="row pt-md-4">
+        <div class="col-md-12">
+            <div class="blog-entry ftco-animate d-md-flex">
+                <div class="form-group">
+
+                    <h4>{{question}}</h4>
+					<div style="white-space: pre-line;">
+                        {{ result|safe }} {# Use |safe filter to render HTML #}
+                    </div>
+                    <br>
+                    <br>
+                    <a href="{% url 'ask_AI' %}" class="btn btn-success" >back</a>
+				</div>
+				
+            </div>
+        </div>
+	</div>
+
+{% endblock %}

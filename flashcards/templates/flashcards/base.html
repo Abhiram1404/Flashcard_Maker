@@ -33,6 +33,7 @@
                     <li><a href="{% url 'add_card' %}">Add Card</a></li>
                     <li><a href="{% url 'learn' %}">Learn</a></li>
                     <li><a href="{% url 'chat_home' %}">chat</a></li>
+                    <li><a href="{% url 'ask_AI' %}">ask_AI</a></li>
                     {% if user.is_authenticated %}
                         <li><span>{{user.username}}&nbsp</span>><a href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
@@ -85,7 +86,7 @@
                       <ul class="categories">
                         <li><a href="{% url 'get_cards_by_category' 'Algorithms' %}">Algorithms <span>({{counts.0}})</span>
                         </a></li>
-                        <li><a href="{% url 'get_cards_by_category' 'Data-Structures' %}">Data Structures <span>({{counts.1}})</span></a></li>
+                        <li><a href="{% url 'get_cards_by_category' 'OS' %}">OS <span>({{counts.1}})</span></a></li>
                         <li><a href="{% url 'get_cards_by_category' 'Complexity' %}">Complexity <span>({{counts.2}})</span>
                         </a></li>
                       </ul>

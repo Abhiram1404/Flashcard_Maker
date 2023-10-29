@@ -7,7 +7,12 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
+key="AIzaSyAZ8ri4gSLDLKlfbqqDPWiiKROp2d-xAX8"
 
+
+import google.generativeai as palm
+
+#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
 
 # -------------------------------------------------------------------------------
 
@@ -16,7 +21,7 @@ def get_counts(all_cards):
     counts = []
     count_alg = all_cards.filter(category='Algorithms').count()
     counts.append(count_alg)
-    count_ds = all_cards.filter(category='Data-Structures').count()
+    count_ds = all_cards.filter(category='OS').count()
     counts.append(count_ds)
     count_com = all_cards.filter(category='Complexity').count()
     counts.append(count_com)
@@ -27,9 +32,60 @@ def get_popular_cards(all_cards, n):
     popular_cards = all_cards.order_by('likes')[:n]
     return popular_cards
 
+
+@login_required
+def ask_AI(request):
+    if request.user.is_authenticated:
+        all_cards = FlashCard.objects.filter(creator=request.user.id)
+    else:
+        all_cards = FlashCard.objects.all()
+    counts = get_counts(all_cards)
+    popular_cards = all_cards.order_by('-likes')[:3]
+    context = {'counts':counts, 'popular_cards':popular_cards }
+    return render(request,'flashcards/ask_AI.html',context )
+    
+
+def generate(request):
+    if request.user.is_authenticated:
+        all_cards = FlashCard.objects.filter(creator=request.user.id)
+    else:
+        all_cards = FlashCard.objects.all()
+    counts = get_counts(all_cards)
+    popular_cards = all_cards.order_by('-likes')[:3]
+
+    question=""
+    if request.method=="POST":
+        question=request.POST['question']
+        pass
+    
+    if question=="":
+        answer="ask a question"
+
+    else:
+        
+        palm.configure(api_key=key)
+        response = palm.generate_text(prompt=question)
+        answer= response.result
+        
+    answer_html = answer.replace('\n', '<br>')
+
+    context={'result':answer_html,'counts':counts, 'popular_cards':popular_cards,"question":question}
+    return render(request, 'flashcards/generate.html', context)
+
+    
+
+
+
 @login_required
 def chat_home(request):
-    return render(request, 'flashcards/chat_home.html')
+    if request.user.is_authenticated:
+        all_cards = FlashCard.objects.filter(creator=request.user.id)
+    else:
+        all_cards = FlashCard.objects.all()
+    counts = get_counts(all_cards)
+    popular_cards = all_cards.order_by('-likes')[:3]
+    context = {'counts':counts, 'popular_cards':popular_cards }
+    return render(request, 'flashcards/chat_home.html',context)
 
 def room(request, room):
     username = request.GET.get('username')
@@ -42,7 +98,7 @@ def room(request, room):
 
 def checkview(request):
     room = request.POST['room_name']
-    username = request.POST['username']
+    username = request.user.username
 
     if Room.objects.filter(name=room).exists():
         return redirect('/'+room+'/?username='+username)
@@ -53,7 +109,7 @@ def checkview(request):
 
 def send(request):
     message = request.POST['message']
-    username = request.POST['username']
+    username = request.user.username
     room_id = request.POST['room_id']
 
     new_message = Message.objects.create(value=message, user=username, room=room_id)
@@ -66,18 +122,7 @@ def getMessages(request, room):
     messages = Message.objects.filter(room=room_details.id)
     return JsonResponse({"messages":list(messages.values())})
 
-# -------------------------------------------------------------------------------
 
-# home - show all cards without pagination
-# def home(request):
-#     all_cards = FlashCard.objects.all()
-#     cards = sorted(all_cards.order_by('front'), key=lambda x: random.random())
-#     counts = get_counts(all_cards)
-#     popular_cards = all_cards.order_by('-likes')[:3]
-#     context = {'cards':cards, 'counts':counts, 'popular_cards':popular_cards }
-#     return render(request, 'flashcards/home.html', context)
-
-# home - show all cards with pagination
 def home(request):
     if request.user.is_authenticated:
         all_cards = FlashCard.objects.filter(creator=request.user.id)
@@ -95,17 +140,6 @@ def home(request):
     return render(request, 'flashcards/home.html', context)
 
 
-# get flashcards by a specific category without pagination
-# def get_cards_by_category(request, category):
-#     all_cards = FlashCard.objects.all()
-#     cards = all_cards.filter(category=category)
-#     counts = get_counts(all_cards)
-#     popular_cards = all_cards.order_by('-likes')[:3]
-#     context = {'cards':cards, 'counts':counts, 'popular_cards':popular_cards }
-#     return render(request, 'flashcards/home.html', context)
-
-
-# get flashcards by a specific category with pagination
 def get_cards_by_category(request, category):
     if request.user.is_authenticated:
         all_cards = FlashCard.objects.filter(creator=request.user.id)
@@ -237,5 +271,3 @@ def dump_csv(request):
 
 
 
-
-    
