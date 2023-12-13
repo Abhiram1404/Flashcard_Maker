@@ -95,19 +95,11 @@ WSGI_APPLICATION = 'Django_Flashcards.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse("postgres://flashcard_maker_user:1tEnGXycgtUmIDBhhJ5sEGE0PZeAgVpL@dpg-ckv9nsq37rbc73foklt0-a.oregon-postgres.render.com/flashcard_maker")
-}
-
-'''DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Flashcards',
-        'USER': 'Abhi',
-        'PASSWORD': 'Abhi@1404',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-}'''
+}
 
 
 
