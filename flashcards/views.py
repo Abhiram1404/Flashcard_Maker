@@ -23,7 +23,7 @@ def get_counts(all_cards):
     counts.append(count_alg)
     count_ds = all_cards.filter(category='OS').count()
     counts.append(count_ds)
-    count_com = all_cards.filter(category='Complexity').count()
+    count_com = all_cards.filter(category='DBMS').count()
     counts.append(count_com)
     return counts
 
