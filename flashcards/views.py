@@ -10,7 +10,7 @@ from django.http import HttpResponse, JsonResponse
 key="AIzaSyAZ8ri4gSLDLKlfbqqDPWiiKROp2d-xAX8"
 
 
-import google.generativeai as palm
+import google.generativeai as genai
 
 #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
 
@@ -63,9 +63,12 @@ def generate(request):
 
     else:
         
-        palm.configure(api_key=key)
-        response = palm.generate_text(prompt=question)
-        answer= response.result
+        genai.configure(api_key=key)
+        '''response = genai.generate_text(prompt=question)
+        answer= response.result'''
+        model = genai.GenerativeModel('gemini-pro')
+        response = model.generate_content(question)
+        answer=response.text
         
     answer_html = answer.replace('\n', '<br>')
 
